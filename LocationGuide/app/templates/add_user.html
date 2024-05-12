@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Guide_회원가입</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            margin-left: 50px;
+            max-height: 60px;
+        }
+
+        .web-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .container {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #313a6b;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px; /* 조절 가능 */
+        }
+
+        #checkDuplicateBtn {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<!-- myproject1/app/templates/add_user.html -->
+<body class="">
+    <header>
+        <img class="logo" src="../static/images/main1.png" alt="로고">
+        <div class="web-name">Location Guide</div>
+    </header>
+
+    <div class="container">
+        <h2>회원가입</h2>
+        <form action="{{ url_for('main.add_user') }}" method="post">
+            <div class="form-group">
+                <label class="label" for="username">아이디:</label>
+                <div class="input-group">
+                    <input type="text" id="username" name="username" required="">
+                    <button type="button" id="checkDuplicateBtn" onclick="checkDuplicate()">중복확인</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label" for="password">비밀번호:</label>
+                <input type="password" id="password" name="password" required="">
+            </div>
+
+            <div class="form-group">
+                <label class="label" for="confirmPassword">비밀번호 확인:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required="">
+            </div>
+
+            <div class="form-group">
+                <label class="label" for="name">이름:</label>
+                <input type="text" id="name" name="name" required="">
+            </div>
+
+            <button type="submit">가입하기</button>
+        </form>
+    </div>
+    <script>
+        function checkDuplicate() {
+            // 여기에 아이디 중복 확인 로직을 추가
+            var usernameInput = document.getElementById('username');
+            var usernameValue = usernameInput.value;
+
+            // 가상의 중복 확인 로직
+            if (usernameValue === '중복아이디') {
+                alert('아이디가 이미 사용 중입니다.');
+            } else {
+                alert('아이디를 사용할 수 있습니다.');
+            }
+        }
+    </script>
+
+</body>
+
+</html>

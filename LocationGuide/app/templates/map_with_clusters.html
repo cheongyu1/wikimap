@@ -1,0 +1,132 @@
+<!-- map_with_clusters.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoogleMap with MarkerClustering_Asia</title>
+    <style>
+        #map {
+            height: 600px;
+            width: 1200px;
+        }
+
+        #info {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="info"></div>
+
+<script>
+    // 구글 맵 API 초기화
+    function initMap() {
+        // 지도 생성
+        const map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 22.5726,  lng: 88.3639 }, // 초기 중심 좌표
+            zoom: 3.5 // 초기 확대 수준
+        });
+
+        // 30개의 북미 도시 좌표 생성
+        const cities = [			
+            // 아시아 21개
+            {lat: 35.6895, lng: 139.6917}, // 도쿄
+            {lat: 31.2304, lng: 121.4737}, // 상하이
+            {lat: 37.5665, lng: 126.9780}, // 서울
+            {lat: 25.0320, lng: 121.5654}, // 타이베이
+            {lat: 34.6937, lng: 135.5023}, // 오사카
+            {lat: 22.3964, lng: 114.1095}, // 홍콩
+            {lat: 14.5995, lng: 120.9842}, // 마닐라
+            {lat: 1.3521, lng: 103.8198}, // 싱가포르
+            {lat: 13.7563, lng: 100.5018}, // 방콕
+            {lat: 22.5726, lng: 88.3639}, // 콜카타
+            {lat: 29.6539, lng: 91.1400}, // 랴사
+            {lat: 10.762622, lng: 106.660172}, // 호치민
+            {lat: 12.9714, lng: 77.5946}, // 방갈로르
+            {lat: 37.5665, lng: 126.9780}, // 인천
+            {lat: 19.0760, lng: 72.8777}, // 뭄바이
+            {lat: 39.9042, lng: 116.4074}, // 베이징
+            {lat: 28.6139, lng: 77.2090}, // 델리
+            {lat: 31.2304, lng: 121.4737}, // 상하이
+            {lat: 6.9271, lng: 79.8612}, // 콜롬보
+            {lat: 41.0082, lng: 28.9784}, // 이스탄불
+        ];
+
+
+        // 마커 생성 및 지도에 추가
+        const markers = cities.map(city => new google.maps.Marker({
+            position: city,
+            map: map
+        }));
+
+        // 마커 클러스터링 라이브러리 로드
+        const markerCluster = new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+
+        // 마커 클릭 이벤트 리스너 추가
+        markers.forEach((marker, index) => {
+            marker.addListener('click', () => {
+                // 좌표 정보를 변수에 저장
+                selectedCoordinates = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+                updateInfo();
+
+                // 서버에 좌표 전송
+                sendCoordinatesToServer(selectedCoordinates);
+            });
+        });
+    }
+
+    // 정보 업데이트 함수
+    function updateInfo() {
+        document.getElementById('info').innerText = `선택한 마커의 좌표 정보: ${selectedCoordinates.lat}, ${selectedCoordinates.lng}`;
+    }
+
+    // 선택된 좌표를 저장할 변수
+    let selectedCoordinates;
+
+    // 구글 맵 API 비동기로 로드
+    function loadGoogleMapScript() {
+        const script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDhS9dWeJeVXp0XWXq6oDgUdj5LxU_zwcc&callback=initMap';
+        script.defer = true;
+        document.head.appendChild(script);
+    }
+
+    // 페이지 로드 시 구글 맵 API 로드
+    window.onload = loadGoogleMapScript;
+
+    // 서버에 좌표 전송 함수
+function sendCoordinatesToServer(coordinates) {
+    // AJAX를 통한 서버 호출
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    const address = response.address;
+                    if (address) {
+                        alert(`선택한 마커의 주소 정보:\n${address}`);
+                    } else {
+                        alert('주소 정보를 가져올 수 없습니다.');
+                    }
+                } catch (error) {
+                    console.error('서버 응답 파싱 오류:', error);
+                    alert('주소 정보를 가져올 수 없습니다.');
+                }
+            } else {
+                console.error('서버 응답 오류:', this.status);
+                alert('주소 정보를 가져올 수 없습니다.');
+            }
+        }
+    };
+    xhr.open('GET', `/reverse_geocode?lat=${coordinates.lat}&lng=${coordinates.lng}`, true);
+    xhr.send();
+}
+</script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+</body>
+</html>

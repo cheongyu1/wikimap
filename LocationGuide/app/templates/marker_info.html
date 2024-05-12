@@ -1,0 +1,82 @@
+<!-- templates/marker_info.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marker Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            margin-left: 50px;
+            max-height: 60px;
+        }
+
+        .web-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .info-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .wikipedia-info {
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img class="logo" src="../static/images/main1.png" alt="로고">
+        <div class="web-name">Location Guide</div>
+    </header>
+
+    <div class="info-container">
+        <h1>Marker Information</h1>
+        <p><strong>Address:</strong> {{ address }}</p>
+
+        <div class="wikipedia-info">
+            {{ wikipedia_info | safe }}
+        </div>
+    </div>
+
+</body>
+
+</html>

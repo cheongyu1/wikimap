@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfricaMap</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            margin-left: 50px;
+            max-height: 60px;
+        }
+
+        .web-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-button,
+        .logout-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .user-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px; 
+        }
+        
+        .user-button:hover {
+            color: blue;
+        }
+
+        .logout-button {
+            margin-top: 10px;
+            padding: 10px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #313a6b;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logout-button:hover {
+            background-color: #1a1f3f; 
+        }
+        #map {
+            height: 800px;
+            width: 100%;
+        }
+
+        #info {
+            margin-top: 10px;
+        }
+
+        #search-container {
+            position: absolute;
+            top: 90px;
+            right: 60px;
+            z-index: 1;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #999;
+            display: flex;
+        }
+
+        #search-input {
+            flex: 1;
+            margin-right: 5px;
+        }
+
+        #search-btn,
+        #city-info-btn {
+            background-color: #313a6b;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        #city-info-btn {
+            margin-left: 5px;
+        }
+        #map-title {
+            position: absolute;
+            top: 17%; /* 조정 가능 */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 26px;
+            color: #313a6b;
+            background-color: transparent;
+            z-index: 2;
+        }
+    
+        /* 사용법 버튼 스타일 추가 */
+        #instruction-btn {
+            position: absolute;
+            top: 22%; /* 조정 가능 */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #313a6b;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 3; /* 추가: 버튼을 더 위로 올리기 */
+        }
+    
+        #instruction-btn:hover {
+            background-color: #1a1f3f;
+        }
+    
+        /* 모달(팝업) 스타일 추가 */
+        #instruction-modal p:first-of-type {
+            font-weight: bold; 
+        }
+        #instruction-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 4; 
+            text-align: center;
+        }
+    
+        #instruction-modal img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        #instruction-modal img {
+            max-width: 50%; 
+            height: auto;
+            margin-bottom: 15px;
+        }
+        #instruction-modal #close-btn {
+            background-color: #313a6b;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            padding: 10px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        #instruction-modal #close-btn:hover {
+            background-color: #1a1f3f;
+        }
+
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5); /* 반투명한 흰 배경 */
+            z-index: 9999; /* 다른 요소들보다 위에 나타나도록 설정 */
+        }
+
+    </style>
+</head>
+<body>
+
+	<body class="">
+        <header>
+            <a href="{{ url_for('main.select_map') }}">
+                <img class="logo" src="../static/images/main1.png" alt="로고">
+            </a> 
+            <div class="web-name">Location Guide</div>
+            <div class="user-info">
+                <span>{{ session.user_name }}</span>
+                <a href="{{ url_for('main.logout') }}" onclick="logout()" class="logout-button">Logout</a>
+            </div>
+        </header>
+        <div id="map-title">아프리카 지도</div>
+        <button id="instruction-btn" onclick="showInstruction()">사용법</button>
+    
+        <!-- 모달(팝업) 스타일 추가 -->
+        <div id="instruction-modal">
+            <img src="../static/images/guide_img.jpg" alt="사용법 이미지">
+            <p>Location Guide 사용법</p>
+            <p>1. 원하는 지역의 마커를 선택하고 이동버튼을 눌러 해당 도시의 정보 페이지로 이동하세요.</p>
+            <p>2. 검색 기능을 활용하여 특정 도시에 대한 정보를 찾을 수 있습니다.</p>
+            <button id="close-btn" class="action-button" onclick="closeInstruction()">닫기</button>
+        </div>
+        </div>
+        <div id="search-container">
+            <input id="search-input" type="text" placeholder="검색">
+            <button id="search-btn" onclick="searchPlace()">이동</button>
+            <button id="city-info-btn" onclick="showCityInfo()">검색</button>
+        </div>
+        
+        <div id="map"></div>
+        <div id="info"></div>
+
+        <div id="loading-overlay"></div>
+        <div id="loading-indicator" style="display: none; position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%);">
+            <img src="../static/images/loading.gif" alt="로딩 중..." style="width: 50px; height: 50px;">
+        </div>
+
+<script>
+    let map;
+    let autocomplete;
+    let citiesCoordinates = [
+    {lat: 15.5007, lng: 32.5599}, // 쿠알라람푸
+    {lat: 15.5932, lng: 32.5342}, // 알 퀴루
+    {lat: -4.0435, lng: 39.6682},  // 몰린디
+    {lat: 11.8551, lng: 13.1587}, // 메이두구리
+    {lat: -33.918861, lng: 18.423300}, // 케이프타운
+    {lat: -26.204103, lng: 28.047305}, // 요하네스버그
+    {lat: -29.858680, lng: 31.021840}, // 더반
+    {lat: -33.9681, lng: 25.6001}, // 포트엘리자베스
+    {lat: 9.1450, lng: 40.4897}, // 아디스아바바
+    {lat: 12.6030, lng: 37.4523}, // 디레다와
+    {lat: 11.1860, lng: 39.7333}, // 겔레두
+    {lat: -18.8792, lng: 47.5079}, // 안타나나리보
+    {lat: 3.8480, lng: 11.5021}, // 야운데
+    {lat: 5.9631, lng: 10.1593}, // 듀알라
+    {lat: 4.0511, lng: 9.7679}, // 두알라
+    {lat: 30.0330, lng: 31.2336}, // 카이로
+    {lat: 31.2156, lng: 29.9553}, // 알렉산드리아
+    {lat: 6.6953, lng: -1.6256}, // 쿠마시
+    {lat: 36.7395, lng: 5.1082}, // 오란
+    {lat: 33.8005, lng: 2.8265}, // 보르자
+    {lat: 31.6288, lng: -7.9811}, // 마라케시
+    {lat: 32.8854, lng: -6.9061}, // 페스
+    ];
+
+
+    // 구글 맵 API 초기화
+    function initMap() {
+        // 지도 생성
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 5.7333, lng: 19.0833 }, // 초기 중심 좌표
+            zoom: 3.2 // 초기 확대 수준
+        });
+
+        // 아프리카 도시 좌표 생성
+        const markers = citiesCoordinates.map(city => new google.maps.Marker({
+            position: city,
+            map: map
+        }));
+
+            // 마커 클러스터링 라이브러리 로드
+            const markerCluster = new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+
+            // 마커 클릭 이벤트 리스너 추가
+            markers.forEach(marker => {
+                marker.addListener('click', () => {
+                    selectedCoordinates = { lat: marker.getPosition().lat(), lng: marker.getPosition().lng() };
+                    showLoadingIndicator();
+                    // 서버에 좌표 전송
+                    sendCoordinatesToServer(selectedCoordinates);
+                    
+                });
+            });
+
+            // 검색 자동완성 추가
+            const input = document.getElementById('search-input');
+            autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo('bounds', map);
+
+            // 전체 지도 클릭 이벤트 리스너 추가
+            map.addListener('click', (event) => {
+                handleMapClick(event.latLng);
+            });
+        }
+
+        document.getElementById('search-input').addEventListener('input', function() {
+            this.value = this.value.replace(/[^a-zA-Z]/g, '');
+        });
+
+        function searchPlace() {
+            const placeName = document.getElementById('search-input').value;
+
+            if (placeName === '') {
+                alert('검색어를 입력하세요.');
+                return;
+            }
+
+            const request = {
+                query: placeName,
+                fields: ['name', 'geometry'],
+            };
+
+            const service = new google.maps.places.PlacesService(map);
+
+            service.findPlaceFromQuery(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    // 검색시 지도 줌 조정
+                    map.setZoom(12);
+                } else {
+                    alert('장소를 찾을 수 없습니다.');
+                }
+            });
+        }
+
+        // 로딩 인디케이터 엘리먼트 가져오기
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        function showCityInfo() {
+            // 검색어 가져오기
+            const searchKeyword = document.getElementById('search-input').value.trim();
+
+            // 검색어가 비어있지 않은 경우에만 처리
+            if (searchKeyword) {
+                // 로딩 인디케이터 표시
+                showLoadingIndicator();
+
+                // AJAX를 통해 검색어를 Flask 서버로 전송
+                fetch('/wikipedia_info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `keyword=${encodeURIComponent(searchKeyword)}`,
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // 응답 데이터를 현재 창에 출력
+                    document.open();
+                    document.write(data);
+                    document.close();
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                })
+                .finally(() => {
+                    // 로딩 인디케이터 숨기기
+                    hideLoadingIndicator();
+                });
+            } else {
+                // 검색어가 비어있는 경우 알림
+                alert('검색어를 입력해주세요.');
+            }
+        }
+
+        function showLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'block';
+        }
+
+        function hideLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'none';
+        }
+
+        // 서버 응답 후 클릭 이벤트 활성화
+        function enableClickEvent() {
+            clickEventEnabled = true;
+            hideLoadingOverlay(); // 로딩 레이어를 숨김
+        }
+
+        // 로딩 중에 화면 터치 비활성화
+        function disableTouchDuringLoading() {
+            // 이벤트 리스너 제거
+            map.setOptions({ draggable: false });
+            showLoadingOverlay(); // 로딩 레이어를 표시
+        }
+
+        // 로딩이 완료된 후에 화면 터치 활성화
+        function enableTouchAfterLoading() {
+            // 이벤트 리스너 추가
+            map.setOptions({ draggable: true });
+            hideLoadingOverlay(); // 로딩 레이어를 숨김
+        }
+
+        // 로딩 인디케이터 표시 함수
+        function showLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'block';
+            disableTouchDuringLoading(); // 로딩 중에 화면 터치 비활성화
+        }
+
+        // 로딩 인디케이터 숨기기 함수
+        function hideLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'none';
+            enableTouchAfterLoading(); // 로딩이 완료된 후에 화면 터치 활성화
+        }
+        
+
+        function handleMapClick(latLng) {
+                selectedCoordinates = { lat: latLng.lat(), lng: latLng.lng() };
+                updateInfo();
+            }
+
+        // 좌표 저장 변수
+        let selectedCoordinates;
+
+        // 페이지 로드 시 구글 맵 API 로드
+        function loadGoogleMapScript() {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDhS9dWeJeVXp0XWXq6oDgUdj5LxU_zwcc&libraries=places&callback=initMap'; // 여러분의 API 키로 변경
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // 페이지 로드 시 구글 맵 API 로드
+        function loadGoogleMapScript() {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDhS9dWeJeVXp0XWXq6oDgUdj5LxU_zwcc&libraries=places&callback=initMap'; // 여러분의 API 키로 변경
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+        // 페이지 로드 시 구글 맵 API 로드
+        window.onload = loadGoogleMapScript;
+
+        // 사용법 모달 열기
+        function showInstruction() {
+            const instructionModal = document.getElementById('instruction-modal');
+            instructionModal.style.display = 'block';
+        }
+
+        // 사용법 모달 닫기
+        function closeInstruction() {
+            const instructionModal = document.getElementById('instruction-modal');
+            instructionModal.style.display = 'none';
+        }
+
+        // 서버에 좌표 전송 함수
+        function sendCoordinatesToServer(coordinates) {
+            // AJAX를 통해 서버로 좌표 전송
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    const response = JSON.parse(this.responseText);
+                    const address = response.address;
+
+                    if (address) {
+                        // 주소를 서버로 보내어 Wikipedia 정보를 가져옴
+                        sendAddressToWikipedia(address);
+                    } else {
+                        alert('주소 정보를 가져올 수 없습니다.');
+                    }
+                } else if (this.readyState == 4) {
+                    alert('주소 정보를 가져올 수 없습니다.');
+                }
+            };
+
+            xhr.open('GET', `/reverse_geocode?lat=${coordinates.lat}&lng=${coordinates.lng}`, true);
+            xhr.send();
+        }
+        
+        // 주소를 서버로 보내어 Wikipedia 정보를 가져오는 함수
+        function sendAddressToWikipedia(address) {
+            // AJAX를 통해 주소를 Flask 서버로 전송
+            const xhrWikipedia = new XMLHttpRequest();
+            xhrWikipedia.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // 정보를 받아온 후, 현재 창에서 information.html로 이동하여 출력
+                    document.open();
+                    document.write(this.responseText);
+                    document.close();
+                } else if (this.readyState == 4) {
+                    alert('Wikipedia 정보를 가져올 수 없습니다.');
+                }
+            };
+
+            xhrWikipedia.open('POST', '/wikipedia_info', true);
+            xhrWikipedia.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhrWikipedia.send(`keyword=${address}`);
+        }
+</script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+</body>
+</html>

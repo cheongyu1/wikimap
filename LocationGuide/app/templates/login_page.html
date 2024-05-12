@@ -1,0 +1,150 @@
+<!-- myproject1/app/templates/login_page.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Guide_로그인페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            margin-left: 50px;
+            max-height: 60px;
+        }
+
+        .web-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%; 
+        }
+
+        .login-box {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 300px; 
+            width: 100%; 
+        }
+
+        .login-input {
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .login-btn,
+        .signup-btn {
+            width: 100%;
+            background-color: #313a6b;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .login-btn:hover,
+        .signup-btn:hover {
+            background-color: #45a049;
+        }
+        .signup-btn {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
+            text-decoration: none; 
+            width: 93%; 
+            padding: 8.5px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        
+        .signup-btn:hover {
+            background-color: #e0e0e0; 
+        }
+        
+
+        
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .login-image {
+            max-width: 17%;
+            margin-top: -120px;
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<!-- myproject1/app/templates/login_html -->
+<body>
+
+    <header>
+        <img class="logo" src="../static/images/main1.png" alt="로고">
+        <div class="web-name">Location Guide</div>
+    </header>
+
+    <!-- 로그인 창 -->
+    <div class="login-container">
+        <!-- 이미지 추가 -->
+        <img class="login-image" src="../static/images/main1.png" alt="이미지 설명">
+        <div class="login-box">
+            <h2>로그인</h2>
+            <form action="{{ url_for('main.login_page') }}" method="post">
+                <input type="text" class="login-input" id="username" name="username" placeholder="아이디" required=""><br>
+                <input type="password" class="login-input" id="password" name="password" placeholder="비밀번호" required=""><br>
+
+                <!-- 아이디 찾기, 비밀번호 찾기, 로그인 버튼, 회원가입 링크 -->
+                <div class="links-container id-find-login-gap">
+                    <button class="login-btn" type="submit">로그인</button>
+                    <a href="{{ url_for('main.add_user') }}" class="signup-btn">회원가입</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // 비밀번호 찾기 함수
+        function forgotPassword() {
+            var username = prompt('가입하신 아이디를 입력해주세요.');
+            if (username) {
+                alert('비밀번호 재설정 링크가 이메일로 전송되었습니다.');
+            }
+        }
+    </script>
+</body>
+</html>

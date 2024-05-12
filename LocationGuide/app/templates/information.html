@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Guide_지도 카테고리 선택</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            margin-left: 50px;
+            max-height: 60px;
+        }
+
+        .web-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-button,
+        .logout-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .user-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        .user-button:hover,
+        .logout-button:hover {
+            color: blue;
+        }
+
+        .logout-button {
+            margin-top: 10px;
+            padding: 10px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #313a6b;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logout-button:hover {
+            background-color: #1a1f3f;
+        }
+
+        #wikipedia-container {
+            text-align: center;
+            margin: 50px auto;
+            max-width: 800px;
+        }
+
+        .wikipedia-frame {
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .wikipedia-frame h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .wikipedia-content {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            column-gap: 20px;
+            row-gap: 10px;
+        }
+
+        .wikipedia-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .description {
+            grid-column: span 3;
+        }
+
+        .back-button {
+            border: none; /* Remove border */
+            background: none; /* Remove background */
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .back-button img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+
+<body class="">
+    <header>
+        <a href="{{ url_for('main.select_map') }}">
+            <img class="logo" src="../static/images/main1.png" alt="로고">
+        </a> 
+        <div class="web-name">Location Guide</div>
+        <div class="user-info">
+            <span>{{ session.user_name }}</span>
+            <a href="{{ url_for('main.logout') }}" onclick="logout()" class="logout-button">Logout</a>
+        </div>
+    </header>
+
+    <div class="back-button">
+        <button onclick="goBack()" class="back-button">
+            <img src="../static/images/back.jpg" alt="뒤로가기" width="100" height="100">
+        </button>
+    </div>
+
+    <div id="wikipedia-container">
+        <div class="wikipedia-frame">
+            <h2 id="firstHeading" class="firstHeading mw-first-heading">
+                <span class="mw-page-title-main">{{ search_result.title }}</span>
+            </h2>
+
+            <!-- 이미지가 존재할 경우에만 표시 -->
+            {% if first_image_url %}
+                <div class="image-container">
+                    <img src="{{ 'http:' + first_image_url }}" alt="위키백과 이미지">
+                </div>
+            {% endif %}
+
+            <div class="wikipedia-content">
+                <div class="city-name"></div>
+                <p class="description">
+                    {% if description %}
+                        <!-- Flask 앱에서 받은 정보를 동적으로 추가할 부분 -->
+                        {{ description | safe }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 뒤로가기 함수
+        function goBack() {
+            location.reload();
+        }
+    </script>
+</body>
+
+<style>
+    .back-button {
+        float: left;
+        margin-right: 10px;
+        width: 50px;
+        height: 50px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+</style>
+
+</html>

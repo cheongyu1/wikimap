@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Guide_지도 카테고리 선택</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            margin-left: 50px;
+            max-height: 60px;
+        }
+
+        .web-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-button,
+        .logout-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .user-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px; 
+        }
+        
+        .user-button:hover {
+            color: blue;
+        }
+        
+
+        .user-button:hover {
+            color: blue;
+        }
+
+        .logout-button {
+            margin-top: 10px;
+            padding: 10px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #313a6b;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logout-button:hover {
+            background-color: #1a1f3f; 
+        }
+
+        #category-image {
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        #container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #cities-info p {
+            text-align: left;
+            margin-left: 100px;
+            margin-top: -20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #search-category {
+            text-align: left;
+            margin-left: 100px;
+            margin-top: -20px;
+            margin-bottom: 30px;
+        }
+
+        .continent-button {
+            display: inline-block;
+            margin-right: 40px;
+            margin-bottom: 40px;
+        }
+
+        .continent-img {
+            width: 200px;
+            height: 200px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="">
+    <header>
+        <a href="{{ url_for('main.select_map') }}">
+            <img class="logo" src="../static/images/main1.png" alt="로고">
+        </a> 
+        <div class="web-name">Location Guide</div>
+        <div class="user-info">
+            <span>{{ session.user_name }}</span>
+            <a href="{{ url_for('main.logout') }}" onclick="logout()" class="logout-button">Logout</a>
+        </div>
+    </header>
+
+    <div id="container">
+        <div id="cities-info">
+            <p style="font-weight: bold;">대륙별 주요 도시</p>
+            <!-- 도시 정보를 원하시는대로 추가하실 수 있습니다. -->
+        </div>
+
+        <div id="search-category">
+            <p>검색할 대륙 카테고리를 선택하시오</p>
+            <!-- 검색 카테고리를 원하시는대로 추가하실 수 있습니다. -->
+        </div>
+
+        <!-- 대륙 이미지 버튼들 -->
+        <div>
+            <div class="continent-button" onclick="navigateToContinent('continent1')">
+                <img src="../static/images/Asia_map.png" alt="Continent 1" class="continent-img">
+            </div>
+            <div class="continent-button" onclick="navigateToContinent('continent2')">
+                <img src="../static/images/Africa_map.png" alt="Continent 2" class="continent-img">
+            </div>
+            <div class="continent-button" onclick="navigateToContinent('continent3')">
+                <img src="../static/images/EU_map.png" alt="Continent 3" class="continent-img">
+            </div>
+        </div>
+
+        <div>
+            <div class="continent-button" onclick="navigateToContinent('continent4')">
+                <img src="../static/images/NA_map.png" alt="Continent 4" class="continent-img">
+            </div>
+            <div class="continent-button" onclick="navigateToContinent('continent5')">
+                <img src="../static/images/Oceania_map.png" alt="Continent 5" class="continent-img">
+            </div>
+            <div class="continent-button" onclick="navigateToContinent('continent6')">
+                <img src="../static/images/SA_map.png" alt="Continent 6" class="continent-img">
+            </div>
+        </div>
+        <script>
+            function navigateToContinent(continent) {
+                // 대륙에 대한 동작을 정의할 수 있습니다.
+                if (continent === 'continent1') {
+                    window.location.href = "{{ url_for('main.Asia_Clustering') }}";
+                } else if (continent === 'continent2') {
+                    window.location.href = "{{ url_for('main.Africa_Clustering') }}";
+                } else if (continent === 'continent3') {
+                    window.location.href = "{{ url_for('main.EU_Clustering') }}";
+                } else if (continent === 'continent4') {
+                    window.location.href = "{{ url_for('main.NA_Clustering') }}";
+                } else if (continent === 'continent5') {
+                    window.location.href = "{{ url_for('main.Oceania_Clustering') }}";
+                } else if (continent === 'continent6') {
+                    window.location.href = "{{ url_for('main.SA_Clustering') }}";
+                }
+            }
+        
+        </script>
+    </div>
+
+</body>
+
+</html>
